@@ -1,0 +1,310 @@
+﻿@model WebApp.ViewModels.Profile.ProfileVM
+
+@{
+    ViewData["Title"] = "Profile Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("_header", Model.loggedin_user)
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/image/what-the-hex-dark.png');
+            background-repeat: repeat;
+            margin: 0;
+            padding: 0;
+            color: #ECF0F1;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            .profile-header img {
+                border-radius: 50%;
+                width: 150px;
+                height: 150px;
+                margin-right: 20px;
+            }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+            .profile-info h1 {
+                margin: 0;
+            }
+
+        .profile-posts h2 {
+            margin-top: 30px;
+        }
+
+        .post-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+        .friend-item, .follow-item, .follower-item {
+            margin-bottom: 10px;
+        }
+
+        .friend-request-item {
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-info {
+            color: #31708f;
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+        }
+
+    </style>
+</head>
+<body>
+
+    @if (TempData["AlertMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["AlertMessage"]
+        </div>
+    }
+
+    <div class="container mt-5">
+        <div class="profile-header">
+            <img src="@((Model.user_viewing.ProfilePicture != null) ? Model.user_viewing.ProfilePicture : "/images/user.jpg")" alt="Profile Picture">
+            <div class="profile-info">
+                <h1>@Model.user_viewing.VisibleName</h1>
+                <p><strong>Email:</strong> @Model.user_viewing.Email</p>
+                @*<p><strong>Joined:</strong> @Model.JoinDate.ToString("MMMM dd, yyyy")</p>*@
+                @if (Model.user_viewing == Model.loggedin_user)
+                {
+                    <a href="/Settings" class="btn btn-primary">Edit Profile</a>
+                    <a href="#" data-toggle="modal" data-target="#followModal" class="btn btn-primary">Follows</a>
+                    <a href="#" data-toggle="modal" data-target="#friendRequestsModal" class="btn btn-primary">Friend Requests</a>
+                    <a href="#" data-toggle="modal" data-target="#outgoingRequestsModal" class="btn btn-primary">Outgoing Friend Requests</a>
+                    <a href="#" data-toggle="modal" data-target="#friendsModal" class="btn btn-primary">Friends</a>
+                    <a href="#" data-toggle="modal" data-target="#followingModal" class="btn btn-primary">Following</a>
+                    <a href="#" data-toggle="modal" data-target="#followersModal" class="btn btn-primary">Followers</a>
+                }
+                else
+                {
+                    <a href="@Url.Action("Follow", "Home", new { username = Model.user_viewing.UserName })" class="btn btn-primary">Follow</a>
+                    <a href="#" data-toggle="modal" data-target="#sendFriendRequestModal" class="btn btn-primary">Add Friend</a>
+                }
+            </div>
+        </div>
+
+        <div class="profile-posts">
+            <h2>Posts</h2>
+            @if (Model.user_viewing.Posts == null || !Model.user_viewing.Posts.Any())
+            {
+                <p>No posts available.</p>
+            }
+            else
+            {
+                @foreach (var post in Model.user_viewing.Posts)
+                {
+                    <div class="post-item">
+                        <h3><a href="@Url.Action("Details", "Community", new { id = post.Id })">@post.Title</a></h3>
+                        <p>@post.Content</p>
+                        <p><small>Created at: @post.CreatedAt.ToString("MMMM dd, yyyy HH:mm")</small></p>
+                    </div>
+                }
+            }
+        </div>
+
+        @if (Model.loggedin_user != null)
+        {
+            <!-- Incoming Friend Requests Modal -->
+            <div class="modal fade" id="friendRequestsModal" tabindex="-1" role="dialog" aria-labelledby="friendRequestsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="friendRequestsModalLabel">Incoming Friend Requests</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.loggedin_user.Friends.Any(f => f.Status == "incoming-friend-request"))
+                            {
+                                @foreach (var request in Model.loggedin_user.Friends.Where(f => f.Status == "incoming-friend-request"))
+                                {
+                                    <div class="friend-request-item">
+                                        <span>@request.user.VisibleName</span>
+                                        <a href="@Url.Action("AcceptFriendRequest", "Home", new { id = request.FriendId })" class="btn btn-success">Accept</a>
+                                        <a href="@Url.Action("IgnoreFriendRequest", "Home", new { id = request.FriendId })" class="btn btn-danger">Ignore</a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>No incoming friend requests.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Outgoing Friend Requests Modal -->
+            <div class="modal fade" id="outgoingRequestsModal" tabindex="-1" role="dialog" aria-labelledby="outgoingRequestsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="outgoingRequestsModalLabel">Outgoing Friend Requests</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.loggedin_user.Friends.Any(f => f.Status == "outgoing-friend-request"))
+                            {
+                                @foreach (var request in Model.loggedin_user.Friends.Where(f => f.Status == "outgoing-friend-request"))
+                                {
+                                    <div class="friend-request-item">
+                                        <span>@request.friend.VisibleName</span>
+                                        <span class="text-muted">Pending</span>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>No outgoing friend requests.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friends Modal -->
+            <div class="modal fade" id="friendsModal" tabindex="-1" role="dialog" aria-labelledby="friendsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="friendsModalLabel">Friends</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.loggedin_user.Friends.Any(f => f.Status == "Friend"))
+                            {
+                                @foreach (var friend in Model.loggedin_user.Friends.Where(f => f.Status == "Friend"))
+                                {
+                                    <div class="friend-item">
+                                        <a href="@Url.Action("Profile", "Home", new { userId = friend.friend.Id })">@friend.friend.VisibleName</a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>No friends to show.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Following Modal -->
+            <div class="modal fade" id="followingModal" tabindex="-1" role="dialog" aria-labelledby="followingModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="followingModalLabel">Following</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.loggedin_user.Friends.Any(f => f.Status == "follow"))
+                            {
+                                @foreach (var follow in Model.loggedin_user.Friends.Where(f => f.Status == "follow"))
+                                {
+                                    <div class="follow-item">
+                                        <a href="@Url.Action("Profile", "Home", new { userId = follow.friend.Id })">@follow.friend.VisibleName</a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>No following users.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Followers Modal -->
+            <div class="modal fade" id="followersModal" tabindex="-1" role="dialog" aria-labelledby="followersModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="followersModalLabel">Followers</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @if (Model.loggedin_user.Friends.Any(f => f.Status == "followed"))
+                            {
+                                @foreach (var follower in Model.loggedin_user.Friends.Where(f => f.Status == "followed"))
+                                {
+                                    <div class="follower-item">
+                                        <a href="@Url.Action("Profile", "Home", new { userId = follower.friend.Id })">@follower.friend.VisibleName</a>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p>No followers to show.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send Friend Request Modal -->
+            <div class="modal fade" id="sendFriendRequestModal" tabindex="-1" role="dialog" aria-labelledby="sendFriendRequestModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to send a friend request to @Model.user_viewing.VisibleName?</p>
+                            <form id="friendRequestForm" method="post" action="@Url.Action("SendFriendRequest", "Home", new { id = Model.user_viewing.Id })">
+                                <button type="submit" class="btn btn-primary">Send Request</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="profile-activity mt-5">
+            <h2>Recent Activity</h2>
+            <!-- Add recent activity here, e.g., comments, likes, etc. -->
+            <p>No recent activity.</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>
+

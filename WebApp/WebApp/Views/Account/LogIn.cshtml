@@ -1,0 +1,70 @@
+﻿@model IdentityCore.ViewModels.Account.LogInVM
+
+@{
+    ViewData["Title"] = "LogIn";
+}
+
+@if (ViewBag.EmailVerifiedMessage != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.EmailVerifiedMessage
+    </div>
+}
+@if (ViewBag.PasswordResetConfirmation != null)
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.PasswordResetConfirmation
+    </div>
+}
+
+<div class="container row ">
+
+    <div class="logo-container col-md-6">
+        <img src="/image/logoNobackground.png" alt="Image" class="logo-image">
+    </div>
+    <div class="col-md-1"> 
+
+    </div>
+    <div class="rounded-box col-md-5">
+        <div class="align-items-left">
+            <h1>Sign In</h1>
+            <span>Don't have an account?</span>
+            <a href="/Account/Register" class="blue">Sign Up</a>
+            <hr />
+        </div>
+        <form asp-action="LogIn" asp-route-returnUrl="@ViewBag.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserName" class="control-label">Email</label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Password</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-primary" />
+            </div>
+            <hr />
+            <span class="input-label">Forgot Password?</span>
+            <a href="/Account/ForgotPassword" class="blue pt-24 input-label">Reset Password</a>
+        </form>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+@section Styles {
+    <link href="/css/Login.css" rel="stylesheet" type="text/css" />
+}

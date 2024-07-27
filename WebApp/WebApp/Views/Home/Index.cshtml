@@ -1,0 +1,125 @@
+﻿@model IdentityCore.Infrastructure.AppUser
+@{
+    ViewData["Title"] = "Home Page";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+        margin: 0;
+        padding: 0;
+        color: #ECF0F1;
+    }
+
+    .card-text {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.875rem; /* Smaller font size for content */
+        color: #f5f5f5; /* Lighter color for better contrast */
+    }
+
+    .card-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.75rem;
+        margin-bottom: 10px;
+        color: #f5f5f5;
+        font-weight: bold; /* Emphasize the title */
+    }
+
+    .card-body {
+        background: #1e1e28;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s, transform 0.3s;
+        padding: 20px;
+    }
+
+
+</style>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"] - My WebApp</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    @await Html.PartialAsync("_header", Model)
+
+    <div class="container mt-5">
+
+        <div class="row mt-5">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Register</h5>
+                        <p class="card-text">Sign up to become a member of our community.</p>
+                        <a href="/Account/Register" class="btn btn-primary">Register Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Login</h5>
+                        <p class="card-text">Already have an account? Log in here.</p>
+                        <a href="/Account/Login" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Community</h5>
+                        <p class="card-text">Join the community to see and create posts.</p>
+                        <a href="/Community" class="btn btn-primary">Go to Community</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Trading</h5>
+                        <p class="card-text">Begin your trading journey</p>
+                        <a href="/api/trade/index" class="btn btn-primary">Go to Trading</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cookie consent alert -->
+    @if (!Context.Request.Cookies.ContainsKey("PolicyAccepted") && !Context.Request.Cookies.ContainsKey("PolicyDeclined"))
+    {
+        <div id="cookieConsent" class="alert alert-info alert-dismissible fade show fixed-top" role="alert">
+            <strong>Cookie Consent:</strong> By using this site, you agree to our terms and conditions.
+            <button type="button" id="acceptPolicy" class="btn btn-primary">Accept</button>
+            <button type="button" id="declinePolicy" class="btn btn-secondary">Decline</button>
+        </div>
+    }
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('acceptPolicy').addEventListener('click', function () {
+            // Set cookie to expire in 365 days (adjust as needed)
+            var expiryDate = new Date();
+            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            document.cookie = "PolicyAccepted=true;expires=" + expiryDate.toUTCString() + ";path=/";
+            document.getElementById('cookieConsent').style.display = 'none'; // Hide the consent banner after accepting
+        });
+
+        document.getElementById('declinePolicy').addEventListener('click', function () {
+            // Set a cookie to indicate policy was declined (adjust expiry as needed)
+            var expiryDate = new Date();
+            expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+            document.cookie = "PolicyDeclined=true;expires=" + expiryDate.toUTCString() + ";path=/";
+            document.getElementById('cookieConsent').style.display = 'none'; // Hide the consent banner after declining
+        });
+    </script>
+</body>
+</html>
+

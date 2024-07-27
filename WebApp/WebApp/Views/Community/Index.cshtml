@@ -1,0 +1,419 @@
+﻿@model WebApp.ViewModels.Community.CommunityVM
+
+@{
+    ViewData["Title"] = "Community Page";
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+        margin: 0;
+        padding: 0;
+        color: #ECF0F1;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    #search-input {
+        width: 60%;
+        display: inline-block;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px 0 0 5px;
+        border-right: none;
+        margin-bottom: 10px;
+    }
+
+    #search-button {
+        padding: 10px 20px;
+        border: 1px solid #28a745;
+        border-left: none;
+        border-radius: 0 5px 5px 0;
+        background-color: #28a745;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        #search-button:hover {
+            background-color: #218838;
+        }
+
+    .btn {
+        display: inline-block;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        line-height: 1.5;
+        border-radius: 0.25rem;
+        transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+        color: #fff;
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-primary:hover {
+            color: #fff;
+            background-color: #218838;
+            border-color: #218838;
+        }
+
+    .post {
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s;
+    }
+
+        .post:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+    .post-title {
+        font-size: 1.5rem;
+        color: #ecf0f1; /* Light text color */
+    }
+
+    .post-content {
+        font-size: 1rem;
+        color: #bdc3c7; /* Slightly darker text color for content */
+    }
+
+    .post-meta {
+        font-size: 0.875rem;
+        color: #95a5a6; /* Light muted text color */
+    }
+
+    .img-thumbnail {
+        max-width: 50px;
+        border-radius: 50%;
+    }
+
+    #loading {
+        text-align: center;
+        padding: 20px;
+        font-size: 1.2rem;
+        color: #218838;
+    }
+
+    .modal-header, .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        margin: 0;
+        color: #ecf0f1; /* Light text color */
+    }
+
+    .modal-header, .modal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #2c3e50; /* Darker header background */
+        color: #ecf0f1; /* Light text color */
+    }
+    .close {
+        font-size: 1.5rem;
+        line-height: 1;
+        color: #aaa;
+        opacity: 0.5;
+    }
+
+        .close:hover, .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: 0.75;
+        }
+
+    .modal-body {
+        padding: 15px;
+        color: #ecf0f1; /* Light text color */
+    }
+
+    .modal-footer {
+        padding: 10px 15px;
+    }
+        .main-container {
+        background-color: black; /* Darker blue background for the main container */
+        padding: 20px;
+    }
+
+    .navbar, .navbar-brand, .navbar-nav > li > a {
+        background-color: black !important; /* Darker header background */
+        color: #ecf0f1 !important; /* Light text color for navbar */
+    }
+
+    .navbar-nav > li > a:hover, .navbar-brand:hover {
+            color: black !important; /* Slightly darker hover color */
+    }
+
+</style>
+
+@await Html.PartialAsync("_header", Model.User)
+
+<div class="text-center">
+    <h1 class="display-4">Community Posts</h1>
+    <p>Welcome to the community page. Here are the latest posts:</p>
+    <div class="mb-3">
+        <input type="text" id="search-input" class="form-control" placeholder="Search posts...">
+        <button type="button" id="search-button" class="btn btn-primary">Search</button>
+    </div>
+    <p>
+        <a href="javascript:void(0);" id="create-post-button" class="btn btn-primary">Create New Post</a>
+    </p>
+</div>
+
+<div id="posts-container" class="row">
+    @await Html.PartialAsync("_PostsPartial", Model.Posts)
+</div>
+<div id="loading" style="display:none;">Loading more posts...</div>
+<div id="load-more-trigger"></div> <!-- This div will be observed for loading more posts -->
+<!-- Modal for sign-in prompt -->
+<div class="modal fade" id="signInModal" tabindex="-1" role="dialog" aria-labelledby="signInModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signInModalLabel">Sign In Required</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                You must be signed in to create a new post.
+            </div>
+            <div class="modal-footer">
+                <a href="/Account/Login" class="btn btn-primary">Sign In</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('create-post-button').addEventListener('click', function () {
+            var userIsSignedIn = @((Model.User != null).ToString().ToLower());
+
+            if (!userIsSignedIn) {
+                $('#signInModal').modal('show');
+            } else {
+                window.location.href = '@Url.Action("Create", "Community")';
+            }
+        });
+
+        function performSearch() {
+            var searchTerm = document.getElementById('search-input').value.trim();
+            var searchUrl = `/Community/SearchPosts?searchTerm=${encodeURIComponent(searchTerm)}`;
+
+            fetch(searchUrl)
+                .then(response => response.text())
+                .then(postsHtml => {
+                    document.getElementById('posts-container').innerHTML = postsHtml;
+                    reinitializePage();
+                })
+                .catch(error => console.error('Error searching posts:', error));
+        }
+
+        function reinitializePage() {
+            // Reattach event handlers
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const postId = this.getAttribute('data-post-id');
+
+                    fetch(`/api/PostApi/HandleLikes?postId=${postId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const likesCountElement = document.querySelector(`#likes-count-${postId}`);
+                            const likesIconElement = document.querySelector(`#likes-icon-${postId}`);
+                            likesCountElement.textContent = data.likesCount;
+
+                            if (data.isLiked) {
+                                this.classList.remove('unfilled');
+                                this.classList.add('filled');
+                                likesIconElement.src = '/images/icons/fill-owl.svg';
+                            } else {
+                                this.classList.remove('filled');
+                                this.classList.add('unfilled');
+                                likesIconElement.src = '/images/icons/unfill-owl.svg';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+
+
+
+            // Call any other initialization functions needed
+            randomizePostSizes();
+            // Reinitialize any other scripts or functionalities needed
+            document.querySelectorAll('.created-at').forEach(element => {
+                const createdAt = element.getAttribute('data-created-at');
+                element.textContent = getTimeSince(createdAt);
+            });
+        }
+
+        document.getElementById('search-button').addEventListener('click', performSearch);
+        document.getElementById('search-input').addEventListener('keydown', function (event) {
+            if (event.keyCode === 13) {
+                performSearch();
+            }
+        });
+
+        let pageNumber = 1;
+        const pageSize = 5;
+        let loading = false;
+
+        // Observer to trigger loading more posts
+        const observer = new IntersectionObserver(async entries => {
+            if (entries[0].isIntersecting && !loading) {
+                loading = true;
+                const loadingDiv = document.getElementById('loading');
+                loadingDiv.style.display = 'block';
+
+                pageNumber++;
+
+                try {
+                    loadMorePosts();
+                } catch (error) {
+                    console.error('Error loading more posts:', error);
+                }
+
+                loadingDiv.style.display = 'none';
+                loading = false;
+            }
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+        observer.observe(document.getElementById('load-more-trigger'));
+
+        function randomizePostSizes() {
+            const postsContainer = document.getElementById('posts-container');
+            const posts = Array.from(postsContainer.querySelectorAll('.col-md-6, .col-md-4, .col-md-8'));
+
+            let currentRow = [];
+            let currentRowWidth = 0;
+
+            posts.forEach((post, index) => {
+                if (post.classList.contains('col-md-4') || post.classList.contains('col-md-8')) {
+                    // Skip posts that already have a size class
+                    currentRow.push(post);
+                    currentRowWidth += post.classList.contains('col-md-4') ? 4 : 8;
+                    return;
+                }
+
+                let colSize;
+                if (index % 4 === 0) {
+                    colSize = 4;
+                } else if (index % 4 === 1) {
+                    colSize = 8;
+                } else if (index % 4 === 2) {
+                    colSize = 6;
+                } else {
+                    colSize = 6;
+                }
+
+                if (currentRowWidth + colSize > 12) {
+                    postsContainer.appendChild(createRow(currentRow));
+                    currentRow = [];
+                    currentRowWidth = 0;
+                }
+
+                post.classList.remove('col-md-6');
+                post.classList.add(`col-md-${colSize}`);
+                currentRow.push(post);
+                currentRowWidth += colSize;
+            });
+
+            if (currentRow.length > 0) {
+                postsContainer.appendChild(createRow(currentRow));
+            }
+        }
+
+        function createRow(posts) {
+            const row = document.createElement('div');
+            row.classList.add('row', 'post-row');
+            posts.forEach(post => {
+                row.appendChild(post);
+            });
+            return row;
+        }
+
+        function loadMorePosts() {
+            const currentScrollY = window.scrollY;
+
+            fetch(`/Community/LoadPosts?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+                .then(response => response.text())
+                .then(postsHtml => {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = postsHtml;
+                    const postsContainer = document.getElementById('posts-container');
+                    const newPosts = Array.from(tempDiv.querySelectorAll('.post-item'));
+
+                    newPosts.forEach(newPost => {
+                        const postId = newPost.getAttribute('Id');
+                        if (!postsContainer.querySelector(`#${postId}`)) {
+                            postsContainer.appendChild(newPost);
+                        }
+                    });
+                    randomizePostSizes(); // Call the function to apply sizes to new posts
+                    window.scrollTo(0, currentScrollY); // Restore the scroll position
+                    document.querySelectorAll('.created-at').forEach(element => {
+                        const createdAt = element.getAttribute('data-created-at');
+                        element.textContent = `${getTimeSince(createdAt)}`;
+                    });
+                })
+                .catch(error => console.error('Error loading more posts:', error));
+        }
+
+        function getTimeSince(dateTimeString) {
+            console.log("Parsing date:", dateTimeString); // Log the date string
+            const dateTime = new Date(dateTimeString);
+            const now = new Date();
+            const timeSpan = now - dateTime;
+
+            const minutes = Math.floor(timeSpan / (1000 * 60));
+            const hours = Math.floor(timeSpan / (1000 * 60 * 60));
+            const days = Math.floor(timeSpan / (1000 * 60 * 60 * 24));
+            const months = Math.floor(days / 30);
+            const years = Math.floor(days / 365);
+
+            if (minutes < 1) return "Created: just now";
+            if (minutes < 60) return `Created: ${minutes} minutes ago`;
+            if (hours < 24) return `Created: ${hours} hours ago`;
+            if (days < 30) return `Created: ${days} days ago`;
+            if (days < 365) return `Created: ${months} months ago`;
+            return `Created: ${years} years ago`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            reinitializePage();
+        });
+    </script>
+}

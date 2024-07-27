@@ -1,0 +1,674 @@
+﻿@{
+    ViewData["Title"] = "Trade";
+    // var token = ViewBag.Token as string;
+    // var userId = ViewBag.UserId as Guid?;
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+        margin: 0;
+        padding: 0;
+        color: #ECF0F1;
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #343a40;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #ECF0F1;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+    }
+        .controls > * {
+            flex: 1;
+            min-width: 150px;
+        }
+}
+        .controls label {
+            margin-right: 5px;
+        }
+
+        .controls select,
+        .controls input[type="color"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #495057;
+            color: #ECF0F1;
+        }
+
+            .controls select:focus,
+            .controls input[type="color"]:focus {
+                outline: none;
+                border-color: #26a69a;
+            }
+
+    #chartContainer {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        background-color: #2c2f38;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #chartCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    #overlayCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    .drawing-mode-button {
+        background-color: rgba(0, 255, 0, 0.3); /* Transparent green */
+    }
+
+    .bottom-section {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    #toggleColorsButton {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #1e1e28;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        #toggleColorsButton:hover {
+            background-color: #2a2a38; /* Slightly lighter shade for hover effect */
+        }
+
+    #colorInputs input[type="color"] {
+        margin-right: 20px;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+        #colorInputs input[type="color"]:focus {
+            outline: none;
+            border-color: #26a69a;
+        }
+
+    .balance-info-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: #1e1e28;
+        color: #fff;
+        border-radius: 5px;
+    }
+
+    .left-info, .right-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px; /* Add space between items */
+        color: #fff; /* White text color */
+    }
+
+    .separator {
+        width: 1px;
+        height: 100%;
+        background-color: #fff; /* White color for separator */
+        margin: 0 10px; /* Add space around the separator */
+    }
+
+
+    .orders-container {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #343a40;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #ECF0F1;
+    }
+
+    .order-tabs {
+        display: flex;
+        margin-bottom: 10px;
+
+    }
+
+        .order-tabs button {
+            padding: 10px 20px;
+            border: 2px solid #1e3a5f;
+            background-color: #26a69a;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 10px; /* Add space between buttons */
+        }
+
+            .order-tabs button:last-child {
+                margin-right: 0; /* Remove right margin for the last button */
+            }
+
+
+            .order-tabs button:hover {
+                background-color: #1e8c77;
+            }
+
+    .order-list {
+        display: none;
+    }
+        .orders-container h2 {
+            margin-top: 0;
+        }
+
+    .order-item {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #3b4148;
+    }
+
+        .order-item div {
+            margin-bottom: 5px;
+        }
+
+        .order-item button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #ef5350;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+            .order-item button:hover {
+                background-color: #d32f2f;
+            }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+
+    .order-form {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #343a40;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #ECF0F1;
+    }
+
+        .order-form input,
+        .order-form select,
+        .order-form button {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: #495057;
+            color: #ECF0F1;
+        }
+
+        .order-form button {
+            background-color: #26a69a;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+            .order-form button:hover {
+                background-color: #1e8c77;
+            }
+
+    /* The Modal (background) */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+
+    /* Modal Content/Box */
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: black;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+    /* The Close Button */
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    .button-container {
+        display: flex;
+        gap: 10px; /* Space between buttons */
+        justify-content: flex-end; /* Align buttons to the right */
+    }
+
+        .button-container button {
+            padding: 10px 20px;
+            border: 2px solid #1e3a5f;
+            background-color: #26a69a;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+            .button-container button:hover {
+                background-color: #1e8c77;
+            }
+
+
+
+
+        .button-container2 button {
+            padding: 10px 20px;
+            border: 2px solid #1e3a5f;
+            background-color: #26a69a;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+            .button-container2 button:hover {
+                background-color: #1e8c77;
+            }
+
+    .settings-bar {
+        position: fixed;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        background-color: #1e1e28;
+        padding: 5px;
+        border-radius: 5px 0 0 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+        .settings-button img {
+            width: 40px;
+            height: 40px;
+        }
+
+    .settings-panel {
+        display: none; /* Hidden by default */
+        position: fixed;
+        top: 50%;
+        right: 50px; /* Adjust to position next to the settings bar */
+        transform: translateY(-50%);
+        width: 300px;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .settings-panel h2 {
+            margin-top: 0;
+        }
+
+        .settings-panel button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #26a69a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .settings-panel button:hover {
+                background-color: #1e8c77;
+            }
+
+    .no-gutters > .col,
+    .no-gutters > [class*="col-"] {
+        padding-right: 0;
+        padding-left: 0;
+    }
+    .container-fluid {
+        padding: 0;
+    }
+</style>
+
+<div class="container-fluid mt-4 p-0">
+    <div class="row align-items-start">
+        <div class="col-md-8 controls">
+            <button id="saveChartAsPostButton" class="btn btn-primary mb-2">Save Chart as Post</button>
+            <!-- The Modal -->
+            <div id="postModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Create Post</h2>
+                    <label for="postTitle">Title:</label>
+                    <input type="text" id="postTitle" placeholder="Enter post title">
+                    <label for="postContent">Content:</label>
+                    <textarea id="postContent" placeholder="Enter post content"></textarea>
+                    <label for="postType">Post Type:</label>
+                    <select id="postType">
+                        <option value="Long">Long</option>
+                        <option value="Short">Short</option>
+                    </select>
+                    <button id="createPostButton">Create Post</button>
+                </div>
+            </div>
+            <select id="symbolSelect" class="form-control mb-2">
+                <!-- Options here -->
+            </select>
+            <select id="intervalSelect" class="form-control mb-2">
+                <option value="1min">1 Minute</option>
+                <option value="5min">5 Minutes</option>
+                <option value="15min">15 Minutes</option>
+                <option value="30min">30 Minutes</option>
+                <option value="1h">1 Hour</option>
+                <option value="2h">2 Hours</option>
+                <option value="4h">4 Hours</option>
+                <option value="8h">8 Hours</option>
+                <option value="1D">1 Day</option>
+                <option value="1W">1 Week</option>
+                <option value="1M">1 Month</option>
+            </select>
+            <select id="drawingToolSelect" class="form-control mb-2">
+                <option value="select">Select</option>
+                <option value="rectangle">Rectangle</option>
+                <option value="line">Line</option>
+                <!-- Add more tools as needed -->
+            </select>
+            <button id="toggleDrawingMode" class="btn btn-secondary mb-2">Toggle Drawing Mode</button>
+        </div>
+        <div class="col-md-4 d-flex align-items-center balance-info-container">
+            <div class="left-info">
+                <span id="bidPrice">Bid</span>
+                <span id="askPrice">Ask</span>
+            </div>
+            <div class="separator mx-3"></div>
+            <div class="right-info">
+                <span id="totalBalance">Total Balance</span>
+                <span id="availableBalance">Available Balance</span>
+            </div>
+        </div>
+    </div>
+    <button id="openOrderFormModalButton" class="btn btn-primary">Place New Order</button>
+
+    <div id="chartContainer" class="mt-4">
+        <div id="chartCanvas"></div>
+        <canvas id="overlayCanvas"></canvas>
+    </div>
+    <div id="toggleColorsButton" class="settings-bar">
+        <button id="settingsButton" class="settings-button">
+            <img src="/images/icons/settings.svg" alt="Settings" />
+        </button>
+    </div>
+    <div class="">
+        <div class="orders-container">
+            <h2>Orders</h2>
+            <div class="order-tabs">
+                <button onclick="showOrders('pending')" class="btn btn-primary">Pending Orders</button>
+                <button onclick="showOrders('opened')" class="btn btn-primary">Opened Positions</button>
+                <button onclick="showOrders('completed')" class="btn btn-primary">Completed Orders</button>
+            </div>
+            <div id="pendingOrdersContainer" class="order-list" style="display: none;">
+                <h3>Pending Orders</h3>
+                <!-- Pending orders will be dynamically added here -->
+            </div>
+            <div id="openedPositionsContainer" class="order-list" style="display: none;">
+                <h3>Opened Positions</h3>
+                <!-- Opened positions will be dynamically added here -->
+            </div>
+            <div id="completedOrdersContainer" class="order-list" style="display: none;">
+                <h3>Completed Orders</h3>
+                <!-- Completed orders will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="colorSettingsModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Color Settings</h3>
+        <div id="colorInputs">
+            <label for="lineColor">Line Color:</label>
+            <input type="color" id="lineColor" value="#000000">
+            <br />
+            <label for="upColor">Up Color:</label>
+            <input type="color" id="upColor" value="#26a69a">
+            <br />
+            <label for="downColor">Down Color:</label>
+            <input type="color" id="downColor" value="#ef5350">
+        </div>
+        <br />
+        <h3>Theme</h3>
+        <select id="themeSelect">
+            <option value="light">Light Theme</option>
+            <option value="dark">Dark Theme</option>
+        </select>
+        <h3>Chart Type</h3>
+        <select id="chartTypeSelect">
+            <option value="line">Line Chart</option>
+            <option value="area">Area Chart</option>
+            <option value="candlestick">Candlestick Chart</option>
+            <option value="bar">Bar Chart</option>
+            <option value="baseline">Baseline Chart</option>
+            <option value="stepLine">Step Line Chart</option>
+            <option value="columns">Columns Chart</option>
+            <option value="highLow">High-Low Chart</option>
+        </select>
+        <h3>Timezone</h3>
+        <select id="timeZoneSelect">
+            <option value="America/New_York">New York</option>
+            <option value="Europe/London">London</option>
+            <option value="Asia/Tokyo">Tokyo</option>
+            <option value="Australia/Sydney">Sydney</option>
+        </select>
+        <div class="button-container2" id="settingsContainer">
+            <button style="display:none" id="loadSettingsButton">Load Settings</button>
+            <div id="settingsList"></div>
+        </div>
+        <div class="button-container">
+            <button id="saveNewButton">Save New</button>
+            <button id="saveButton">Save</button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Order Form Modal -->
+<div id="orderFormModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Place New Order</h2>
+        <div class="order-form">
+            <label for="orderModeSelect">Order Mode:</label>
+            <select id="orderModeSelect" onchange="toggleOrderMode()">
+                <option value="market">Market Order</option>
+                <option value="pending">Pending Order</option>
+            </select>
+
+            <div id="marketOrderFields">
+                <label for="marketOrderType">Order Type:</label>
+                <select id="marketOrderType">
+                    <option value="Buy">Buy</option>
+                    <option value="Short">Short</option>
+                </select>
+
+                <label for="marketQuantity">Quantity in Lots:</label>
+                <input type="number" id="marketQuantity" placeholder="Quantity in Lots" step="0.01" />
+
+                <label for="marketStopLoss">Stop Loss:</label>
+                <input type="number" id="marketStopLoss" placeholder="Stop Loss" step="0.01" />
+
+                <label for="marketTakeProfit">Take Profit:</label>
+                <input type="number" id="marketTakeProfit" placeholder="Take Profit" step="0.01" />
+            </div>
+
+            <div id="pendingOrderFields" style="display: none;">
+                <label for="pendingOrderType">Order Type:</label>
+                <select id="pendingOrderType">
+                    <option value="BuyLimit">Buy Limit</option>
+                    <option value="BuyStop">Buy Stop</option>
+                    <option value="SellLimit">Sell Limit</option>
+                    <option value="SellStop">Sell Stop</option>
+                </select>
+
+                <label for="pendingQuantity">Quantity in Lots:</label>
+                <input type="number" id="pendingQuantity" placeholder="Quantity in Lots" step="0.01" />
+
+                <label for="pendingPrice">Price:</label>
+                <input type="number" id="pendingPrice" placeholder="Price" step="0.01" />
+
+                <label for="pendingStopLoss">Stop Loss:</label>
+                <input type="number" id="pendingStopLoss" placeholder="Stop Loss" step="0.01" />
+
+                <label for="pendingTakeProfit">Take Profit:</label>
+                <input type="number" id="pendingTakeProfit" placeholder="Take Profit" step="0.01" />
+            </div>
+
+            <button onclick="placeNewOrder()">Place Order</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.18/signalr.min.js"></script>
+    <script src="/lib/signalr/jquery.signalR.min.js"></script>
+    <script src="/lib/fabric/fabric.min.js"></script>
+    <script src="/js/chart-script.js"></script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            document.getElementById('pendingQuantity').addEventListener('input', function () {
+                const value = this.value;
+                const regex = /^\d+(\.\d{0,2})?$/; // Regular expression to allow only numbers with up to 2 decimal places
+                if (!regex.test(value)) {
+                    this.value = value.slice(0, -1); // Remove the last character if it doesn't match the regex
+                }
+            });
+
+            document.getElementById('marketQuantity').addEventListener('input', function () {
+                const value = this.value;
+                const regex = /^\d+(\.\d{0,2})?$/; // Regular expression to allow only numbers with up to 2 decimal places
+                if (!regex.test(value)) {
+                    this.value = value.slice(0, -1); // Remove the last character if it doesn't match the regex
+                }
+            });
+
+            const orderFormModal = document.getElementById('orderFormModal');
+            const openOrderFormModalButton = document.getElementById('openOrderFormModalButton');
+            const colorModal = document.getElementById('colorSettingsModal');
+            const closeModalButton = colorModal.querySelector('.close');
+            const closeModalButton2 = orderFormModal.querySelector('.close');
+            const colorInputs = document.getElementById('colorInputs');
+
+            openOrderFormModalButton.addEventListener('click', () => {
+                orderFormModal.style.display = 'block';
+            });
+
+            document.getElementById('toggleColorsButton').addEventListener('click', function () {
+                if (!colorInputs.innerHTML.trim()) {
+                    colorInputs.innerHTML = `
+                        <label for="lineColor">Line Color:</label>
+                        <input type="color" id="lineColor" value="#000000">
+                        <br />
+                        <label for="upColor">Up Color:</label>
+                        <input type="color" id="upColor" value="#26a69a">
+                        <br />
+                        <label for="downColor">Down Color:</label>
+                        <input type="color" id="downColor" value="#ef5350">
+                    `;
+                }
+                colorModal.style.display = 'block';
+            });
+
+            closeModalButton.addEventListener('click', function () {
+                colorModal.style.display = 'none';
+            });
+            closeModalButton2.addEventListener('click', function () {
+                orderFormModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside of the modal content
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            window.addEventListener('click', function (event) {
+                if (event.target == colorModal) {
+                    colorModal.style.display = 'none';
+                }
+            });
+
+        });
+
+    </script>
+}

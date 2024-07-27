@@ -1,0 +1,97 @@
+﻿@model IdentityCore.ViewModels.Account.RegisterVM
+
+@{
+    ViewData["Title"] = "Register";
+    if (ViewBag.EmailVerificationSent != null && (bool)ViewBag.EmailVerificationSent)
+    {
+        <script>
+            alert("Verification email has been sent. Please check your email inbox.");
+        </script>
+    }
+}
+
+
+<div class="container row ">
+
+    <div class="logo-container col-md-6">
+        <img src="/image/logoNobackground.png" alt="Image" class="logo-image">
+    </div>
+    <div class="col-md-1">
+    </div>
+    <div class="rounded-box col-md-5">
+        <div class="align-items-left">
+            <h1>Register</h1>
+        </div>
+        <form asp-action="Register" , method='post'>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           @*
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control " />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+         *@
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="VisibleName" class="control-label">Username</label>
+                <input asp-for="VisibleName" class="form-control" />
+                <span asp-validation-for="VisibleName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label">Confirm Password</label>
+                <input asp-for="ConfirmPassword" class="form-control" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TermsAccepted" /> @Html.DisplayNameFor(model => model.TermsAccepted)
+                </label>
+            </div>
+@*             <div class="g-recaptcha" data-sitekey="6LcO2PwpAAAAADvPKQkbczIZsLV7TLT-g14qvwlp"></div>
+            <input type="hidden" asp-for="RecaptchaResponse" /> *@
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary" />
+            </div>
+        </form>
+
+@*     <script src="script.js"></script> *@
+
+   </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+@section Styles {
+    <link href="/css/Login.css" rel="stylesheet" type="text/css" />
+}
+
+@* <script src="https://www.google.com/recaptcha/api.js" async defer></script> *@
+@*
+    <html>
+<head>
+    <title>reCAPTCHA demo: Simple page</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+    <form action="?" method="POST">
+        <div class="g-recaptcha" data-sitekey="6LcO2PwpAAAAADvPKQkbczIZsLV7TLT-g14qvwlp"></div>
+        <br />
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+*@

@@ -1,0 +1,40 @@
+﻿@model WebApp.ViewModels.Settings.BillingVM
+
+@{
+    ViewData["Title"] = "Billing";
+}
+
+@await Html.PartialAsync("_header", Model.user)
+
+<h1>@ViewData["Title"]</h1>
+
+<head>
+    <title>Subscribe to a Cool New Product</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<div class="container mt-5">
+    <div class="row">
+
+        @for (int i = 0; i < Model.subscription_options_price.Count(); i++)
+        {
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h3>@Model.subscription_options_name[i]</h3>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">$@Model.subscription_options_price[i].00 / month</h5>
+                        <p class="card-text">@Model.subscription_options_description[i]</p>
+                        <form action="/api/Payments/create-checkout-session" method="POST">
+                            <input type="hidden" name="lookup_key" value="@Model.subscription_options_priceId[i]" />
+                            <button type="submit" class="btn btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        
+    </div>
+</div>

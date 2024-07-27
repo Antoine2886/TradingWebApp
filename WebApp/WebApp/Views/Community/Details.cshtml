@@ -1,0 +1,186 @@
+﻿@model WebApp.ViewModels.Community.CreateMessageVM
+
+@{
+    ViewData["Title"] = "Post Details";
+    var chartSettingsId = ViewData["ChartSettingsId"];
+}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    #overlayCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    #chartCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+        margin: 0;
+        padding: 0;
+        color: #ECF0F1;
+    }
+
+    .card-body {
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+
+    }
+</style>
+@await Html.PartialAsync("_header", Model.user)
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="post-details">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h1 class="card-title">@Model.post.Title</h1>
+                        <p class="card-text">@Model.post.Content</p>
+                        <p class="card-text"><small class="text-muted">Created at: @Model.post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</small></p>
+                        @if (Model.post.User != null)
+                        {
+                            <p class="card-text">Posted by: @Model.post.User.VisibleName</p>
+                            @if (!string.IsNullOrEmpty(Model.post.User.ProfilePicture))
+                            {
+                                <a href="/Home/Profile?VisibleName=@Model.post.User.VisibleName">
+                                    <img src="@Model.post.User.ProfilePicture" class="img-thumbnail rounded-circle" style="max-width: 50px;" alt="Profile Picture" />
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="/images/user.jpg" class="img-thumbnail rounded-circle" style="max-width: 50px;" alt="Default Profile Picture" />
+                            }
+                        }
+                    </div>
+                </div>
+
+                @if (Model.post.ChartSettings != null)
+                {
+                    <h2 id="Title"></h2>
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Chart</h5>
+                            <div id="chartContainer" style="position: relative; height: 600px;">
+                                <div id="chartCanvas" style="width: 100%; height: 100%;"></div>
+                                <canvas id="overlayCanvas" style=""></canvas>
+                            </div>
+                            <input type="hidden" id="chartSettingsId" value="@chartSettingsId" />
+
+                            <div class="hidden">
+                                <label for="symbolSelect">Symbol:</label>
+                                <select id="symbolSelect"></select>
+
+                                <label for="intervalSelect">Interval:</label>
+                                <select id="intervalSelect"></select>
+
+                                <label for="chartTypeSelect">Chart Type:</label>
+                                <select id="chartTypeSelect"></select>
+
+                                <label for="themeSelect">Theme:</label>
+                                <select id="themeSelect"></select>
+
+                                <label for="timeZoneSelect">Time Zone:</label>
+                                <select id="timeZoneSelect"></select>
+
+                                <div>
+                                    <label for="lineColor">Line Color:</label>
+                                    <input type="color" id="lineColor" value="#000000">
+                                    <label for="upColor">Up Color:</label>
+                                    <input type="color" id="upColor" value="#26a69a">
+                                    <label for="downColor">Down Color:</label>
+                                    <input type="color" id="downColor" value="#ef5350">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Comments</h5>
+
+                        @foreach (var message in Model.post.Messages)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="message-content">
+                                        <p class="card-text">@message.Content</p>
+                                        <p class="card-text"><small class="text-muted">Created at: @message.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</small></p>
+                                    </div>
+                                    <div class="message-user">
+
+                                            <a href="/Home/Profile?VisibleName=@Model.post.User.VisibleName" class="card-link" style="text-decoration: none; color: inherit; cursor: pointer;">@message.User.VisibleName</a>
+
+                                        @if (!string.IsNullOrEmpty(message.User.ProfilePicture))
+                                        {
+                                            <img src="@message.User.ProfilePicture" class="img-thumbnail rounded-circle" style="max-width: 50px;" alt="Profile Picture" />
+                                        }
+                                        else
+                                        {
+                                            <img src="/images/user.jpg" class="img-thumbnail rounded-circle" style="max-width: 50px;" alt="Default Profile Picture" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (Model.user != null)
+                        {
+                            <div class="card mt-3">
+                                <div class="card-body">
+                                    <form asp-action="Details" method="post">
+                                        <input type="hidden" asp-for="@Model.post.Id" />
+                                        <input type="hidden" asp-for="@Model.post.Title" />
+                                        <input type="hidden" asp-for="@Model.post.Content" />
+                                        <input type="hidden" asp-for="@Model.post.CreatedAt" />
+                                        <input type="hidden" asp-for="@Model.post.Messages" />
+                                        <div class="form-group">
+                                            <label asp-for="text" class="control-label">Comment</label>
+                                            <textarea asp-for="text" class="form-control"></textarea>
+                                            <span asp-validation-for="text" class="text-danger"></span>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                                <a href="@Url.Action("Index", "Community")" class="btn btn-link">Back to Community Posts</a>
+
+                        }
+                        else
+                        {
+                            <div class="alert alert-info mt-3">
+                                You must be signed in to comment.
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+@section Scripts {
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="/lib/fabric/fabric.min.js"></script>
+    <script src="/js/trade-chart-script.js"></script>
+}

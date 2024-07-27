@@ -1,0 +1,122 @@
+﻿body, html {
+    font-family: Arial, sans-serif;
+    background-image: url('/image/background.png'); /* Replace 'your-image-url.jpg' with the path to your image */
+    background-size: cover; /* Ensure the image covers the entire background */
+    background-position: center top;
+}
+
+.login-container {
+    /* Any styles specific to the login container */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position:absolute;
+}
+
+.login-form {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+
+}
+.blue {
+    text-decoration: none;
+    color: #299ce0;
+}
+.image-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 10px; /* Adjust padding as needed */
+    border:115px solid red;
+}
+
+.logo-image {
+    width: 500px; /* Adjust width as needed */
+    height: auto; /* Maintain aspect ratio */
+
+}
+/* Your other CSS styles remain the same */
+
+
+.form-control {
+    border: 2px solid rgb(87, 108, 131);
+    border-radius: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #0d4864;
+    color: whitesmoke;
+}
+
+    .form-control:focus {
+        background-color: #0d4864;
+        outline: none; /* Remove the default outline */
+        color: whitesmoke;
+    }
+
+.btn-primary {
+    background: linear-gradient(to right, #0467DB, #3498DB); /* Change colors as needed */
+    display: inline-block;
+    padding: .75rem 1.25rem;
+    border-radius: 10rem;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: .15rem;
+    transition: all .3s;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width:100%;
+}
+    .btn-primary:hover {
+        background: linear-gradient(to right, #3498DB, #0467DB); /* Hover gradient - colors swapped */
+        background-size: 200% 100%;
+        background-position: right bottom;
+        transition: all .3s ease-out; /* Smooth transition for the gradient change */
+    }
+.password-reset a {
+    color: #49a6e9; /* Light blue for links */
+    text-decoration: none;
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+}
+
+a {
+    color: white;
+}
+
+.form-check-label {
+    color: white;
+}
+.text-danger {
+    color: #f44336;
+}
+
+.rounded-box {
+    background-color: #0A3A62; /* Dark blue background */
+    padding: 50px; /* Adjust padding as needed */
+    padding-left: 70px;
+    padding-right: 70px;
+    padding-bottom: 70px;
+    border-radius: 25px; /* Adjust as needed */
+    color: white; /* Text color */
+}
+
+    .rounded-box h1 {
+        color: white; /* Set text color to white */
+        text-align: left; /* Align text to the left */
+        margin-bottom: 20px; /* Adjust space below heading as needed */
+    }
+
+
+.vertical-center {
+    margin-top: 50px; /* Adjust top margin for space above "Sign In" */
+    margin-bottom: 50px; /* Adjust bottom margin for space below "Sign In" */
+}
+

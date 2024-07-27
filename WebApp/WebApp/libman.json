@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "provider": "cdnjs",
+      "library": "fabric.js@5.3.1",
+      "destination": "wwwroot/lib/fabric.js/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "signalr.js@2.4.3",
+      "destination": "wwwroot/lib/signalr.js/"
+    }
+  ]
+}

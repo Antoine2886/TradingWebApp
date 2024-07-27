@@ -1,0 +1,128 @@
+﻿@model IdentityCore.Infrastructure.AppUser
+
+@{
+    ViewData["Title"] = "Settings";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('/image/what-the-hex-dark.png');
+        background-repeat: repeat;
+        margin: 0;
+        padding: 0;
+        color: #ECF0F1;
+    }
+</style>
+
+@await Html.PartialAsync("_header", Model)
+
+<body>
+
+
+<h2>Settings</h2>
+
+<h3>Change Username</h3>
+<form asp-action="UpdateUsername" method="post">
+    <div class="form-group">
+        <label for="newUserName">New Username</label>
+        <input type="text" name="newUserName" class="form-control" value="@Model.VisibleName" />
+    </div>
+    <button type="submit" class="btn btn-primary">Save Username</button>
+</form>
+
+<h3>Change Profile Picture</h3>
+<form asp-action="UpdateProfilePicture" method="post" enctype="multipart/form-data" id="profilePictureForm">
+    <div class="form-group">
+        <label for="profilePicture">Profile Picture</label>
+        <input type="file" name="profilePicture" class="form-control" id="profilePictureInput" style="display: none;" onchange="document.getElementById('profilePictureForm').submit();" />
+    </div>
+    @if (Model.ProfilePicture != null)
+    {
+        <div class="form-group">
+            <label>Current Avatar</label>
+            <br />
+            <img src="@Model.ProfilePicture" class="img-thumbnail" style="max-width: 150px; cursor: pointer;" onclick="document.getElementById('profilePictureInput').click();" />
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label>Current Avatar</label>
+            <br />
+            <img src="/images/user.jpg" class="img-thumbnail" style="max-width: 150px; cursor: pointer;" onclick="document.getElementById('profilePictureInput').click();" />
+        </div>
+    }
+    <button type="submit" class="btn btn-primary">Save Profile Picture</button>
+</form>
+
+<h3>Current Subscription</h3>
+@if (Model.Subscription == null) // If you have an error here, the app should still launch anyway
+{
+    <p>Free Tier</p>
+}
+    else if (Model.Subscription.Price == 5) // If you have an error here, the app should still launch anyway
+{
+    <p>Basic Tier</p>
+}
+    else if (Model.Subscription.Price == 10) // If you have an error here, the app should still launch anyway
+{
+    <p>Mid Tier</p>
+}
+else
+{
+    <p>Pro Tier</p>
+}
+
+<a href="@Url.Action("DeleteAccount", "Settings")" class="btn btn-primary">Delete Account</a>
+
+<a href="@Url.Action("Billing", "Settings")" class="btn btn-primary">Access Subscriptions</a>
+</body>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@*
+@model WebApp.ViewModels.Settings.UserSettingsViewModel
+@{
+    ViewData["Title"] = "Settings";
+}
+
+@await Html.PartialAsync("_header", Model.user)
+
+<h2>Settings</h2>
+
+<h3>Change Username and Profile Picture</h3>
+<form asp-action="makeChanges" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="newUserName">New Username</label>
+        <input type="text" name="newUserName" id="newUserName" class="form-control" value="@Model.user.VisibleName" />
+    </div>
+    <div class="form-group">
+        <label for="profilePicture">Profile Picture</label>
+        <input type="file" name="profilePicture" id="profilePictureInput" class="form-control" />
+        @if (Model.user.ProfilePicture != null)
+        {
+            <div class="form-group">
+                <label>Current Avatar</label>
+                <br />
+                <img src="@Model.user.ProfilePicture" class="img-thumbnail" style="max-width: 150px; cursor: pointer;" onclick="document.getElementById('profilePictureInput').click();" />
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label>Current Avatar</label>
+                <br />
+                <img src="/images/user.jpg" class="img-thumbnail" style="max-width: 150px; cursor: pointer;" onclick="document.getElementById('profilePictureInput').click();" />
+            </div>
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+<a href="@Url.Action("deleteAccount", "Settings")" class="btn btn-primary">Delete Account</a>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+*@

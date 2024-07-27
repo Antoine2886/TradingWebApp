@@ -1,0 +1,78 @@
+﻿@* @{
+    ViewData["Title"] = "Chart Page";
+    var chartSettingsId = ViewData["ChartSettingsId"];
+}
+
+<style>
+    .hidden {
+        display: none;
+    }
+
+    #overlayCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        pointer-events: none;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    #chartCanvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+</style>
+
+<div class="container mt-10">
+    <h1 id="Title" class="text-center">Large Chart</h1>
+    <div id="chartContainer" style="position: relative; height: 600px;">
+        <div id="chartCanvas" style="width: 100%; height: 100%;"></div>
+        <canvas id="overlayCanvas" style=""></canvas>
+    </div>
+    <input type="hidden" id="chartSettingsId" value="@chartSettingsId" />
+
+</div>
+    <div class="hidden">
+        <label for="symbolSelect">Symbol:</label>
+        <select id="symbolSelect"></select>
+
+        <label for="intervalSelect">Interval:</label>
+        <select id="intervalSelect">
+
+        </select>
+
+        <label for="chartTypeSelect">Chart Type:</label>
+        <select id="chartTypeSelect">
+        </select>
+
+        <label for="themeSelect">Theme:</label>
+        <select id="themeSelect">
+        </select>
+
+        <label for="timeZoneSelect">Time Zone:</label>
+        <select id="timeZoneSelect">
+        </select>
+
+        <div>
+            <label for="lineColor">Line Color:</label>
+            <input type="color" id="lineColor" value="#000000">
+            <label for="upColor">Up Color:</label>
+            <input type="color" id="upColor" value="#26a69a">
+            <label for="downColor">Down Color:</label>
+            <input type="color" id="downColor" value="#ef5350">
+        </div>
+    </div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="/js/trade-chart-script.js"></script>
+    <script src="/lib/fabric/fabric.min.js"></script>
+}
+ *@

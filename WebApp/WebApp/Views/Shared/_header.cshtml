@@ -1,0 +1,163 @@
+﻿@model IdentityCore.Infrastructure.AppUser
+
+<style>
+    .user-icon-button {
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    .user-icon {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .dropdown-toggle::after {
+        display: none;
+    }
+
+    .dropdown-menu-end {
+        right: 0;
+        left: auto;
+    }
+
+    .notification-icon {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .notification-dropdown {
+        display: none;
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .notification-dropdown.show {
+        display: block;
+    }
+
+    .notification-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">WebApp</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Home/Privacy">Privacy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Community">Community</a>
+                    </li>
+                </ul>
+
+                <!-- Notification Icon and Dropdown -->
+                @if (Model != null && Model.notifications != null && Model.notifications.Any())
+                {
+                    <div class="notification-icon" id="notificationIcon">
+                        <img src="/image/notification-alert.svg" class="user-icon" alt="Notification Icon" />
+                        <span class="notification-count">@Model.notifications.Count()</span>
+                    </div>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        @foreach (var notification in Model.notifications)
+                        {
+                            //var notifications = Newtonsoft.Json.Linq.JObject.Parse(notification);
+
+                            <div class="notification-item">
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <img src="/image/notification.png" class="user-icon" alt="Notification Icon" />
+                }
+
+                <!-- Include the profile dropdown -->
+                <div class="dropdown">
+                    <button type="button" class="btn user-icon-button dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @if (Model != null && !string.IsNullOrEmpty(Model.ProfilePicture))
+                        {
+                            <img src="@Model.ProfilePicture" class="user-icon" alt="User Icon" />
+                        }
+                        else
+                        {
+                            <img src="/images/user.jpg" class="user-icon" alt="Default User Icon" />
+                        }
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                        @if (Model == null)
+                        {
+                            <a class="dropdown-item" href="/Account/Login">Login</a>
+                        }
+                        else
+                        {
+                            <p class="dropdown-item-text">@Model.VisibleName</p>
+                            <a class="dropdown-item" href="/Account/Logout">Logout</a>
+                            <a class="dropdown-item" href="/Home/Profile?VisibleName=@Model.VisibleName">View Profile</a>
+                            <a class="dropdown-item" href="/Settings">Settings</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var notificationIcon = document.getElementById('notificationIcon');
+        var notificationDropdown = document.getElementById('notificationDropdown');
+
+        notificationIcon.addEventListener('click', function () {
+            notificationDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown if clicked outside
+        document.addEventListener('click', function (event) {
+            if (!notificationIcon.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.classList.remove('show');
+            }
+        });
+    });
+</script>
