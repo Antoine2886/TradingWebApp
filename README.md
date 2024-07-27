@@ -103,12 +103,13 @@ cd TradingWebApp
 2. Create a .env File
 Create a .env file in the root directory with the following content:
 
-makefile
+
 TWELVE_DATA_API_KEY=your_twelve_data_api_key
 TWELVE_DATA_WS_KEY=your_twelve_data_ws_key
 DefaultConnection=Server=localhost;Port=your_port;Database=your_database;Uid=your_uid;Pwd=your_pwd;
 EMAIL_ADDRESS=your_email_address
 EMAIL_PASSWORD=your_email_password
+
 3. Configure appsettings.json
 Update the appsettings.json file with your Stripe API keys:
 
