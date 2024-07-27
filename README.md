@@ -130,12 +130,10 @@ To run the application, use the following command:
 bash
 dotnet run
 Fetching Historical Data
-To fetch historical data, ensure you have at least the first paid tier of Twelve Data. Uncomment the following line in your ConnectWebSocket method:
+To fetch historical data, ensure you have at least the first paid tier of Twelve Data (will still kinda work with the free tier). Uncomment the following line in your TradeService file -> ConnectWebSocket method:
 
-csharp
-await InitializeDataLoading();
-API Endpoints
-User Authentication
+//await InitializeDataLoading();
+
 ```
 ## Available API Endpoints
 
