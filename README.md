@@ -183,35 +183,64 @@ To fetch historical data, ensure you have at least the first paid tier of Twelve
 ## Available API Endpoints
 
 ### Account Management
-
-- **POST /api/account/register**: Register a new user
-- **POST /api/account/login**: Login an existing user
-- **POST /api/account/forgot-password**: Request a password reset
-- **POST /api/account/reset-password**: Reset the user's password
+- POST /api/account/register: Register a new user
+- POST /api/account/login: Login an existing user
+- POST /api/account/forgot-password: Request a password reset
+- POST /api/account/reset-password: Reset the user's password
 
 ### Trading
-
-- **GET /api/trade/historical**: Fetch historical data
-- **GET /api/trade/latest**: Fetch the latest data
-- **POST /api/trade/place-order**: Place a new order
-- **POST /api/trade/execute-order**: Execute an existing order
-- **GET /api/trade/orders**: Fetch all orders
+- GET /api/trade/historical: Fetch historical data
+- GET /api/trade/latest: Fetch the latest data
+- POST /api/trade/place-order: Place a new order
+- POST /api/trade/execute-order: Execute an existing order
+- GET /api/trade/orders: Fetch all orders
+- GET /api/trade/symbols: Get the list of available trading symbols
+- GET /api/trade/bid-ask: Get bid and ask prices for a given symbol
+- GET /api/trade/balance: Get the balance for the logged-in user
 
 ### Batch Requests
-
-- **GET /api/batch/batch**: Fetch batch data
+- GET /api/batch/batch: Fetch batch data including orders, bid-ask data, and balance
 
 ### Community
+- POST /api/post/create: Create a new post with chart and comments
+- GET /api/post/{postId}: Get details of a post by ID
+- POST /api/comment/create: Create a new comment on a post
+- GET /api/user/followers: Get a list of followers
+- POST /api/user/follow: Follow a user
+- POST /api/user/unfollow: Unfollow a user
+- POST /api/user/add-friend: Add a user as a friend
+- POST /api/user/remove-friend: Remove a user from friends
+- POST /api/user/delete-account: Delete the user account with email confirmation
+- POST /api/post/handle-likes: Handle liking and unliking of posts
 
-- **POST /api/post/create**: Create a new post with chart and comments
-- **GET /api/post/{postId}**: Get details of a post by ID
-- **POST /api/comment/create**: Create a new comment on a post
-- **GET /api/user/followers**: Get a list of followers
-- **POST /api/user/follow**: Follow a user
-- **POST /api/user/unfollow**: Unfollow a user
-- **POST /api/user/add-friend**: Add a user as a friend
-- **POST /api/user/remove-friend**: Remove a user from friends
-- **POST /api/user/delete-account**: Delete the user account with email confirmation
+### Home
+- GET /home/index: Retrieves and displays the home page for the logged-in user
+- GET /home/profile: Displays the profile of the user with the specified visible name
+- GET /home/privacy: Displays the privacy policy page
+- GET /home/error: Displays the error page with the request ID
+- POST /home/follow: Handles the follow action, allowing the logged-in user to follow another user
+- POST /home/sendfriendrequest: Sends a friend request from the logged-in user to another user
+- GET /home/acceptfriendrequest: Accepts a friend request from another user
+- POST /home/ignorefriendrequest: Ignores a friend request from another user
+
+### Settings
+- GET /settings/index: Displays the user settings page
+- POST /settings/makechanges: Handles user settings updates including username and profile picture
+- POST /settings/updateusername: Updates the username of the logged-in user
+- POST /settings/updateprofilepicture: Updates the profile picture of the logged-in user
+- POST /settings/deleteaccount: Initiates account deletion process for the logged-in user
+- POST /settings/confirmdeleteaccount: Confirms account deletion for the user
+- GET /settings/billing: Displays the billing information page
+
+### Payments
+- GET /api/payments/config: Provides the Stripe configuration needed for client-side setup
+- POST /api/payments/create-checkout-session: Creates a checkout session for the user
+- GET /api/payments/checkout-session: Retrieves details of a specific checkout session
+- GET /api/payments/success: Handles successful subscription creation
+- POST /api/payments/customer-portal: Creates a billing portal session for the user
+- POST /api/payments/webhook: Webhook endpoint to handle Stripe events
+- POST /api/payments/cancel-subscription: Cancels the user's subscription
+
 
 
 ### Additional Information
