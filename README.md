@@ -92,44 +92,88 @@ This project is a comprehensive trading web application built using ASP.NET Core
 - .NET Core SDK
 - SQL Server
 - Twelve Data API key (requires at least the first paid tier for full functionality)
-- Stripe API keys for payment processing
+- Stripe API keys for payment processing (not functionnal)
 
 ## Installation
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Antoine2886/TradingWebApp.git
-cd TradingWebApp
-2. Create a .env File
-Create a .env file in the root directory with the following content:
+#### Using Visual Studio
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/Antoine2886/TradingWebApp.git
+    cd TradingWebApp
+    ```
+
+2. Open the solution file (`.sln`) in Visual Studio.
+
+3. Create a `.env` file in the root directory with the following content:
+    ```env
+    TWELVE_DATA_API_KEY=xxx
+    TWELVE_DATA_WS_KEY=xxx
+    DefaultConnection=Server=localhost;Port=xxx;Database=xxx;Uid=xxx;Pwd=xxx;
+    EMAIL_ADDRESS=xxx
+    EMAIL_PASSWORD=xxx
+    ```
+
+4.  Configure `appsettings.json` with your Stripe keys (The app will launch even if you don't put your stripe keys): 
+    ```json
+    "Stripe": {
+      "SecretKey": "xxx",
+      "PublishableKey": "xxx"
+    }
+    ```
+
+5. Open the Package Manager Console in Visual Studio:
+    - Go to `Tools` > `NuGet Package Manager` > `Package Manager Console`.
+
+6. Run the following commands in the Package Manager Console to set up the database:
+    ```powershell
+    Add-Migration InitialCreate
+    Update-Database
+    ```
+
+7. To start the application, click the play button (green arrow) at the top of Visual Studio.
+
+#### Using Command Line
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/Antoine2886/TradingWebApp.git
+    cd TradingWebApp
+    ```
+
+2. Create a `.env` file in the root directory with the following content:
+    ```env
+    TWELVE_DATA_API_KEY=xxx
+    TWELVE_DATA_WS_KEY=xxx
+    DefaultConnection=Server=localhost;Port=xxx;Database=xxx;Uid=xxx;Pwd=xxx;
+    EMAIL_ADDRESS=xxx
+    EMAIL_PASSWORD=xxx
+    ```
+
+3. Configure `appsettings.json` with your Stripe keys (The app will launch even if you don't put your stripe keys):
+    ```json
+    "Stripe": {
+      "SecretKey": "xxx",
+      "PublishableKey": "xxx"
+    }
+    ```
+
+4. Run the following commands to set up the database:
+    ```sh
+    dotnet ef migrations add InitialCreate
+    dotnet ef database update
+    ```
+
+5. Build and run the application:
+    ```sh
+    dotnet build
+    dotnet run
+    ```
 
 
-TWELVE_DATA_API_KEY=your_twelve_data_api_key
-TWELVE_DATA_WS_KEY=your_twelve_data_ws_key
-DefaultConnection=Server=localhost;Port=your_port;Database=your_database;Uid=your_uid;Pwd=your_pwd;
-EMAIL_ADDRESS=your_email_address
-EMAIL_PASSWORD=your_email_password
-
-3. Configure appsettings.json
-Update the appsettings.json file with your Stripe API keys:
-
-json
-"Stripe": {
-  "SecretKey": "your_stripe_secret_key",
-  "PublishableKey": "your_stripe_publishable_key"
-}
-4. Database Setup
-Run the following commands to set up the database:
-
-bash
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-Usage
-Running the Application
-To run the application, use the following command:
-
-bash
-dotnet run
 Fetching Historical Data
 To fetch historical data, ensure you have at least the first paid tier of Twelve Data (will still kinda work with the free tier). Uncomment the following line in your TradeService file -> ConnectWebSocket method:
 
