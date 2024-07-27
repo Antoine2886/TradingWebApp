@@ -90,7 +90,23 @@ This project is a comprehensive trading web application built using ASP.NET Core
 
 ## Prerequisites
 - .NET Core SDK
-- SQL Server
+### SQL Server
+
+This application uses MySQL for the database. Ensure you have the following prerequisites installed:
+
+- **MySQL Server**: Version 8.0 or higher
+- **Entity Framework Core**: To interact with the database
+
+In your `Program.cs`, configure the MySQL connection as follows:
+
+```csharp
+builder.Services.AddDbContextFactory<Context>(options =>
+{
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 3)));
+});
+``` 
+You can change the type of database used here 
+
 - Twelve Data API key (requires at least the first paid tier for full functionality)
 - Stripe API keys for payment processing (not functionnal)
 
