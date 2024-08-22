@@ -271,9 +271,9 @@ This project includes logging for request execution times and error handling to 
 
 ### Contributions
 
-Currently, I am not accepting contributions directly as I do not have the time to review and manage all the pull requests. However, if someone is interested and willing to manage the contributions, including reviewing pull requests and ensuring the quality of the code, I would be open to considering it. 
+Currently, we am not accepting contributions directly as I do not have the time to review and manage all the pull requests. However, if someone is interested and willing to manage the contributions, including reviewing pull requests and ensuring the quality of the code, I would be open to considering it. 
 
-If you are interested in taking on this role, please email me at [antoineblanger@gmail.com](mailto:antoineblanger@gmail.com) to discuss further.
+If you are interested in taking on this role, please email us at [antoineblanger@gmail.com](mailto:antoineblanger@gmail.com) or [sowreshms@gmail.com](mailto:sowreshms@gmail.com)to discuss further.
 
 Thank you for your understanding and interest in contributing to the project!
 
