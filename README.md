@@ -268,6 +268,7 @@ This project includes logging for request execution times and error handling to 
 
 
 ## Collaboration
+Mikael Vallée : Marketing Director and Head of Cost Management
 
 ### Contributions
 
